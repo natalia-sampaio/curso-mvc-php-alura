@@ -1,10 +1,9 @@
 <?php
 
-use Alura\Cursos\Controller\InterfaceControladorRequisicao;
+require_once __DIR__ . '/../vendor/autoload.php';
+
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Nyholm\Psr7Server\ServerRequestCreator;
-
-require_once __DIR__ . '/../vendor/autoload.php';
 
 $caminho = $_SERVER['PATH_INFO'];
 $rotas = require __DIR__ . '/../config/routes.php';

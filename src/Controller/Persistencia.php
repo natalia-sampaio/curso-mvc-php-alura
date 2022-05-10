@@ -26,25 +26,23 @@ class Persistencia implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $parsedBody = $request->getParsedBody();
         $descricao = filter_var(
-            $parsedBody['descricao'],
+            $request->getParsedBody()['descricao'],
             FILTER_SANITIZE_SPECIAL_CHARS
         );
 
         $curso = new Curso();
         $curso->setDescricao($descricao);
 
-        $queryString = $request->getQueryParams();
-        $entityId = filter_var(
-            $queryString['id'],
+        $cursoId = filter_var(
+            $request->getQueryParams()['id'],
             FILTER_VALIDATE_INT
         );
 
         $tipo = 'success';
 
-        if (!is_null($entityId) && $entityId !== false) {
-            $curso->setId($entityId);
+        if (!is_null($cursoId) && $cursoId !== false) {
+            $curso->setId($cursoId);
             $this->entityManager->merge($curso);
             $this->defineMensagem($tipo, 'Curso atualizado com sucesso');
         } else {

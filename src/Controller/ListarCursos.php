@@ -14,22 +14,21 @@ class ListarCursos implements RequestHandlerInterface
 {
     use RenderizadorDeHtmlTrait;
     /**
-     * @var \Doctrine\ORM\EntityManagerInterface
+     * @var \Doctrine\Common\Persistence\ObjectRepository
      */
-    private $entityManager;
     private $repositorioDeCursos;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         $this->repositorioDeCursos = $entityManager->getRepository(Curso::class);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new Response(302, [], $this->renderizaHtml('/cursos/listar-cursos.php', [
+        $html = $this->renderizaHtml('/cursos/listar-cursos.php', [
             'cursos' => $this->repositorioDeCursos->findAll(),
             'titulo' => 'Lista de cursos',
-        ]));
+        ]);
+        return new Response(302, [], $html);
     }
 }

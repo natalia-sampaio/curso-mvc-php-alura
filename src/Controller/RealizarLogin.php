@@ -17,23 +17,17 @@ class RealizarLogin implements RequestHandlerInterface
      * @var \Doctrine\Common\Persistence\ObjectRepository
      */
     private $repositorioDeUsuarios;
-    /**
-     * @var \Doctrine\ORM\EntityManagerInterface
-     */
-    private $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
         $this->repositorioDeUsuarios = $entityManager
             ->getRepository(Usuario::class);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $parsedBody = $request->getParsedBody();
         $email = filter_var(
-            $parsedBody['email'],
+            $request->getParsedBody()['email'],
             FILTER_VALIDATE_EMAIL
         );
 
@@ -46,7 +40,7 @@ class RealizarLogin implements RequestHandlerInterface
         }
 
         $senha = filter_var(
-            $parsedBody['senha'],
+            $request->getParsedBody()['senha'],
             FILTER_SANITIZE_SPECIAL_CHARS
         );
 
