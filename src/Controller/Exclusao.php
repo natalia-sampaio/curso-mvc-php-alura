@@ -41,6 +41,7 @@ class Exclusao implements RequestHandlerInterface
             ->getReference(Curso::class, $entityId);
         $this->entityManager->remove($entity);
         $this->entityManager->flush();
+        $this->defineMensagem('success', 'Curso excluído com sucesso');
 
         return new Response(302, ['Location' => '/listar-cursos']);
     }
