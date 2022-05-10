@@ -26,7 +26,7 @@ class CursosEmJson implements RequestHandlerInterface
         $cursos = $this->repositorioDeCursos->findAll();
         return new Response(
             200,
-            ['Content-type' => 'applicatio/json'],
+            ['Content-type' => 'application/json'],
             json_encode($cursos)
         );
     }
