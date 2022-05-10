@@ -4,9 +4,13 @@ namespace Alura\Cursos\Controller;
 
 use Alura\Cursos\Entity\Curso;
 use Alura\Cursos\Helper\FlashMessageTrait;
-use Alura\Cursos\Infra\EntityManagerCreator;
+use Doctrine\ORM\EntityManagerInterface;
+use Nyholm\Psr7\Response;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Exclusao implements InterfaceControladorRequisicao
+class Exclusao implements RequestHandlerInterface
 {
     use FlashMessageTrait;
 
@@ -15,34 +19,29 @@ class Exclusao implements InterfaceControladorRequisicao
      */
     private $entityManager;
 
-    public function __construct()
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = (new EntityManagerCreator())
-            ->getEntityManager();
+        $this->entityManager = $entityManager;
     }
 
-    public function processaRequisicao(): void
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $id = filter_input(
-            INPUT_GET,
-            'id',
+        $queryString = $request->getQueryParams();
+        $entityId = filter_var(
+            $queryString['id'],
             FILTER_VALIDATE_INT
         );
 
-        if (is_null($id) || $id === false) {
+        if (is_null($entityId) || $entityId === false) {
             $this->defineMensagem('danger', 'Curso inexistente');
-            header('Location: /listar-cursos');
-            return;
+            return new Response(302, ['Location' => '/listar-cursos']);
         }
 
-        $curso = $this->entityManager->getReference(
-            Curso::class,
-            $id
-        );
-
-        $this->entityManager->remove($curso);
+        $entity = $this->entityManager
+            ->getReference(Curso::class, $entityId);
+        $this->entityManager->remove($entity);
         $this->entityManager->flush();
-        $this->defineMensagem('success', 'Curso excluído com successo');
-        header('Location: /listar-cursos');
+
+        return new Response(302, ['Location' => '/listar-cursos']);
     }
 }
